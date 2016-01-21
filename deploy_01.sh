@@ -34,22 +34,29 @@ read -s -p "Enter SSH Password :" sshpass
 # OR you can add password in sshpass itself like sshpass='your_password'
 
 
-if [[ $1 == "staging" ]]; then
-	printf "${YELLOW}This is staging deployment${COLOR_OFF}\n"
+printf "${YELLOW}This is staging deployment${COLOR_OFF}\n"
     cd $STAGING_LOCAL_DIR
-	sshpass -p $sshpass ssh -v -p $STAGING_PORT $STAGING_USERNAME@$STAGING_SERVER 'cd public_html/Projects/cwd/ && cd staging'
-    sshpass -p $sshpass scp -v -r /Users/sahil/NodeAngular-Application techhysahil@23.229.183.161:~/public_html/Projects/cwd/staging
-elif [[ $1 == "production" ]]; then
-	printf "${YELLOW}This is production deployment${COLOR_OFF}\n"
-	sshpass -p $sshpass ssh -v -p $PRODUCTION_PORT $PRODUCTION_USERNAME@$PRODUCTION_SERVER ' echo "Remote hostname :" $$ hostname &&\
-		 cd public_html/Projects/ && git pull origin master'
+	sshpass -p $sshpass ssh -v -p $STAGING_PORT $STAGING_USERNAME@$STAGING_SERVER \
+	'cd public_html/Projects/cwd/ && \
+	if [ ! -d staging ]; then  mkdir staging; fi && \
+	cd staging && \
+	if [ ! -d NAA ]; then  mkdir NAA; fi && \
+	cd NAA && \
+	if [ ! -d public ]; then  mkdir public; fi && \
+	if [ ! -d views ]; then  mkdir views; fi'
 
-	if [[ $? -eq 0 ]]; then
-    	echo "File Transfered successfull"
+	#Transfer files
+    #sshpass -p $sshpass scp -v -r /Users/sahil/NodeAngular-Application/public techhysahil@23.229.183.161:~/public_html/Projects/cwd/staging/NAA/public
+    #sshpass -p $sshpass scp -v -r /Users/sahil/NodeAngular-Application/views techhysahil@23.229.183.161:~/public_html/Projects/cwd/staging/NAA/views
+    #sshpass -p $sshpass scp -v -r /Users/sahil/NodeAngular-Application/HttpServer.js techhysahil@23.229.183.161:~/public_html/Projects/cwd/staging/NAA/HttpServer.js
+
+    if [[ $? -eq 0 ]]; then
+        echo "============================================================="
+        echo "============= File Transfered successful ===================="
+        echo "============================================================="
     elif [[ $? -eq 1 ]]; then
-    	echo "Error in Transfering files"
+        echo "============================================================="
+        echo "============= Error in Transfering files ===================="
+        echo "============================================================="
     fi
 
-else
-	printf "${YELLOW}Please add a valid enviromment as first argument${COLOR_OFF}\n"
-fi
