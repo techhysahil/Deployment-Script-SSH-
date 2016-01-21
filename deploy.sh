@@ -38,14 +38,14 @@ if [[ $1 == "staging" ]]; then
 	printf "${YELLOW}This is staging deployment${COLOR_OFF}\n"
 	cd $STAGING_LOCAL_DIR
 	sshpass -p $sshpass ssh -v -p $STAGING_PORT $STAGING_USERNAME@$STAGING_SERVER ' echo "Remote hostname :" $$ hostname &&\
-		 cd $STAGING_REMOTE_DIR && git push origin production'
+		 cd $STAGING_REMOTE_DIR && git pull origin production'
 
 elif [[ $1 == "production" ]]; then
 	printf "${YELLOW}This is production deployment${COLOR_OFF}\n"
 	cd $PRODUCTION_LOCAL_DIR
 	git checkout - production
 	sshpass -p $sshpass ssh -v -p $PRODUCTION_PORT $PRODUCTION_USERNAME@$PRODUCTION_SERVER ' echo "Remote hostname :" $$ hostname &&\
-		 cd PRODUCTION_REMOTE_DIR && git push origin master'
+		 cd PRODUCTION_REMOTE_DIR && git pull origin master'
 else
 	printf "${YELLOW}Please add a valid enviromment as first argument${COLOR_OFF}\n"
 fi
